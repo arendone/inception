@@ -1,5 +1,5 @@
 all:
-	@sudo hostsed add 127.0.0.1 arendon_.42.fr && echo "successfully added arendon_.42.fr to /etc/hosts"
+	@sudo hostsed add 127.0.0.1 arendon.42.fr && echo "successfully added arendon.42.fr to /etc/hosts"
 	sudo docker compose -f ./srcs/docker-compose.yml up -d
 
 clean:
@@ -8,7 +8,7 @@ clean:
 	sudo docker system prune -a
 
 fclean: clean
-	@sudo hostsed rm 127.0.0.1 arendon_.42.fr && echo "successfully removed arendon_.42.fr to /etc/hosts"
+	@sudo hostsed rm 127.0.0.1 arendon.42.fr && echo "successfully removed arendon.42.fr to /etc/hosts"
 	@if [ -d "/home/arendon_/data/wordpress" ]; then \
 	sudo rm -rf /home/arendon_/data/wordpress/* && \
 	echo "successfully removed all contents from /home/arendon_/data/wordpress/"; \

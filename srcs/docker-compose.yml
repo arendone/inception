@@ -19,12 +19,9 @@ services:
       - inception
     volumes:
       - mariadb_v:/var/lib/mysql
+    env_file: .env
     restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+
 
   wordpress:
     container_name: wordpress
@@ -53,8 +50,6 @@ services:
       - wordpress
       - mariadb
     restart: unless-stopped
-    #environment:
-    #  NGINX_HOSTNAME: ${NG_NGINX_HOSTNAME}
 
 
 volumes:

@@ -1,18 +1,17 @@
 # Tell the system where from to build the image, in which OS to build upon
 FROM debian:buster
 
-# install nginx and update the system (debian is limited with its package manager so run apt-get
-RUN apt-get update && apt-get install -y \
-	nginx \
-	openssl && \
-	rm -rf /var/lib/apt/lists/*
+# Install nginx and update the system
+RUN apt-get update -y && \
+	apt-get upgrade -y && \
+	apt-get install -y nginx && \
+	apt-get install openssl
 
-COPY ./conf/nginx.conf /etc/nginx/sites-available/default
+# Copy the conf file
+COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf
 
-#Create the self signed SSL certificates
-RUN openssl req -x509 -days 365 -nodes -newkey rsa:4096 \
-	-keyout /etc/ssl/private/nginx.key \
-	-out /etc/ssl/certs/nginx.crt -sha256 -subj "/CN=arendon.42.fr"
+# Copy self-signed
+COPY ./tools/* /etc/nginx/ssl/
 
 #The CMD command will run nginx, but since it runs in the background we need to 
 #leave it running in the foreground with the "daemon off;" flag otherwise when the image is

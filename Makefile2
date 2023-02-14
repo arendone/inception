@@ -1,0 +1,102 @@
+all:
+	mkdir -p ./data/wordpress/content
+	mkdir -p ./data/mariadb/database
+	@sudo hostsed add 127.0.0.1 arendon.42.fr && echo "successfully added arendon.42.fr to /etc/hosts"
+	sudo docker compose -f ./srcs/docker-compose.yml up -d
+
+clean:
+	sudo docker compose -f ./srcs/docker-compose.yml down
+
+
+fclean: clean
+	@sudo hostsed rm 127.0.0.1 arendon.42.fr && echo "successfully removed arendon.42.fr to /etc/hosts"
+
+	sudo docker-compose -f ./srcs/docker-compose.yml down --volumes --rmi all
+
+# WARNING: Delete wordpress folder in host!
+	@if [ -d "/home/$(USER)/inception/data/wordpress" ]; then \
+	sudo rm -rf /home/$(USER)/inception/data/wordpress/* && \
+	echo "successfully removed all contents from /home/$(USER)/inception/data/wordpress/"; \
+	fi;
+
+# WARNING: Delete mariadb folder in host!
+	@if [ -d "/home/$(USER)/inception/data/mariadb" ]; then \
+	sudo rm -rf /home/$(USER)/inception/data/mariadb/* && \
+	echo "successfully removed all contents from /home/$(USER)/inception/data/mariadb/"; \
+	fi;
+
+	sudo docker system prune -f --volumes -a
+
+re: fclean all
+
+ls:
+	sudo docker image ls
+	sudo docker ps
+
+.PHONY: all, clean, fclean, re, ls
+
+--------
+
+version: '3.5'
+
+
+networks:
+  default:
+  inception-net:
+    name: inception-net
+
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    build: ./requirements/mariadb
+    networks:
+      - inception-net
+    volumes:
+      - mariadb_v:/var/lib/mysql
+    env_file: .env
+    restart: on-failure
+
+
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    build: ./requirements/wordpress
+    networks:
+      - inception-net
+    volumes:
+      - wordpress_v:/var/www/html
+    env_file: .env
+    depends_on:
+      - mariadb
+    restart: on-failure
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    build: ./requirements/nginx
+    ports:
+      - 443:443
+    networks:
+      - inception-net
+    volumes:
+      - wordpress_v:/var/www/html
+    depends_on:
+      - wordpress
+    restart: on-failure
+
+
+volumes:
+  mariadb_v:
+    driver: local
+    driver_opts:
+      device: /home/anahi/inception/data/mariadb/database
+      type: none
+      o: bind
+
+  wordpress_v:
+    driver: local
+    driver_opts:
+      device: /home/anahi/inception/data/wordpress/content
+      type: none
+      o: bind

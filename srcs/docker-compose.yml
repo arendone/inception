@@ -2,67 +2,62 @@ version: '3.5'
 
 
 networks:
-  inception: {}
+  default:
+  inception-net:
+    name: inception-net
 
 services:
   mariadb:
-    container_name: mariadb
     image: mariadb
-    build:
-      context: ./requirements/mariadb
-      args:
-        - DB_NAME=${DB_NAME}
-        - DB_USER=${DB_USER}
-        - DB_PASSWORD=${DB_PASSWORD}
-        - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+    container_name: mariadb
+    build: ./requirements/mariadb
     networks:
-      - inception
+      - inception-net
     volumes:
       - mariadb_v:/var/lib/mysql
     env_file: .env
-    restart: unless-stopped
+    restart: on-failure
 
 
   wordpress:
-    container_name: wordpress
     image: wordpress
+    container_name: wordpress
     build: ./requirements/wordpress
     networks:
-      - inception
+      - inception-net
     volumes:
-      - wordpress_v:/var/www/wordpress
+      - wordpress_v:/var/www/html
     env_file: .env
     depends_on:
       - mariadb
-    restart: unless-stopped
+    restart: on-failure
 
   nginx:
-    container_name: nginx
     image: nginx
+    container_name: nginx
     build: ./requirements/nginx
     ports:
-      - "443:443"
+      - 443:443
     networks:
-      - inception
+      - inception-net
     volumes:
-      - wordpress_v:/var/www/wordpress
+      - wordpress_v:/var/www/html
     depends_on:
       - wordpress
-      - mariadb
-    restart: unless-stopped
+    restart: on-failure
 
 
 volumes:
   mariadb_v:
     driver: local
     driver_opts:
+      device: /home/anahi/data/mariadb
       type: none
       o: bind
-      device: /home/arendon_/data/mariadb
 
   wordpress_v:
     driver: local
     driver_opts:
+      device: /home/anahi/data/wordpress
       type: none
       o: bind
-      device: /home/arendon_/data/wordpress

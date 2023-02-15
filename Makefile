@@ -9,14 +9,14 @@ clean:
 
 fclean: clean
 	@sudo hostsed rm 127.0.0.1 arendon.42.fr && echo "successfully removed arendon.42.fr to /etc/hosts"
-	@if [ -d "/home/arendon_/data/wordpress" ]; then \
-	sudo rm -rf /home/arendon_/data/wordpress/* && \
-	echo "successfully removed all contents from /home/arendon_/data/wordpress/"; \
+	@if [ -d "/home/anahi/data/wordpress" ]; then \
+	sudo rm -rf /home/anahi/data/wordpress/* && \
+	echo "successfully removed all contents from /home/anahi/data/wordpress/"; \
 	fi;
 
-	@if [ -d "/home/arendon_/data/mariadb" ]; then \
-	sudo rm -rf /home/arendon_/data/mariadb/* && \
-	echo "successfully removed all contents from /home/arendon_/data/mariadb/"; \
+	@if [ -d "/home/anahi/data/mariadb" ]; then \
+	sudo rm -rf /home/anahi/data/mariadb/* && \
+	echo "successfully removed all contents from /home/anahi/data/mariadb/"; \
 	fi;
 
 re: fclean all

@@ -8,7 +8,7 @@ RUN apt-get update -y && \
 	apt-get install openssl
 
 # Copy the conf file
-COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY ./conf/nginx.conf /etc/nginx/conf.d
 
 # Copy self-signed
 COPY ./tools/* /etc/nginx/ssl/

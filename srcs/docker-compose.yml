@@ -25,11 +25,11 @@ volumes:
 
 services:
   mariadb:
-    image: inception-mariadb
     container_name: mariadb
+    image: inception-mariadb
     build: ./requirements/mariadb
     volumes:
-      - mariadb_dir:/var/lib/mysql
+      - mariadb_dir:/var/lib/mysql/
     networks:
       - inception-net
     env_file: .env
@@ -37,11 +37,11 @@ services:
 
 
   wordpress:
-    image: inception-wordpress
     container_name: wordpress
+    image: inception-wordpress
     build: ./requirements/wordpress
     volumes:
-      - wordpress_dir:/var/www/html
+      - wordpress_dir:/var/www/
     networks:
       - inception-net
     env_file: .env
@@ -50,13 +50,13 @@ services:
     restart: on-failure
 
   nginx:
-    image: inception-nginx
     container_name: nginx
+    image: inception-nginx
     build: ./requirements/nginx
     ports:
       - 443:443
     volumes:
-      - wordpress_dir:/var/www/html
+      - wordpress_dir:/var/www/
     networks:
       - inception-net
     depends_on:

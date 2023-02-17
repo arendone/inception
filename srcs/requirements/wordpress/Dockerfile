@@ -4,21 +4,22 @@ RUN apt-get update && apt-get -y install \
 	php7.3-fpm \
 	php7.3-mysql \
 	mariadb-client \
-	curl \
+	wget \
 	&& rm -rf /var/lib/apt/lists/*
 
 EXPOSE 9000
 
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d
 
+#Downloads the latest version of WordPress from the official website.
 ADD https://wordpress.org/latest.tar.gz /var/www/latest.tar.gz
-
 RUN cd /var/www && tar -xvf latest.tar.gz && \
 	rm -rf latest.tar.gz
 
-RUN curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar --output /usr/bin/wp --silent
-
-RUN chmod +x ./usr/bin/wp
+#download the latest version of WP-CLI, a command-line interface for managing WordPress websites
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+RUN chmod +x ./wp-cli.phar \
+	&& mv wp-cli.phar /usr/local/bin/wp
 
 RUN mkdir /run/php
 

@@ -5,35 +5,23 @@ networks:
   inception-net:
     name: inception-net
 
-volumes:
-  wordpress_dir:
-    name: wordpress_dir
-    driver: local
-    driver_opts:
-      device: /home/anahi/data/wordpress
-      o: bind
-      type: none
-
-  mariadb_dir:
-    name: mariadb_dir
-    driver: local
-    driver_opts:
-      device: /home/anahi/data/mariadb
-      o: bind
-      type: none
-
-
 services:
   mariadb:
     container_name: mariadb
     image: inception-mariadb
-    build: ./requirements/mariadb
+    build: 
+      context: ./requirements/mariadb
+      args:
+        - DB_NAME=${DB_NAME}
+        - DB_USER=${DB_USER}
+        - DB_PASSWORD=${DB_PASSWORD}
+        - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - mariadb_dir:/var/lib/mysql/
     networks:
       - inception-net
     env_file: .env
-    restart: on-failure
+    restart: unless-stopped
 
 
   wordpress:
@@ -41,24 +29,40 @@ services:
     image: inception-wordpress
     build: ./requirements/wordpress
     volumes:
-      - wordpress_dir:/var/www/
+      - wordpress_dir:/var/www/wordpress
     networks:
       - inception-net
     env_file: .env
     depends_on:
       - mariadb
-    restart: on-failure
+    restart: unless-stopped
 
   nginx:
     container_name: nginx
     image: inception-nginx
     build: ./requirements/nginx
     ports:
-      - 443:443
+      - "443:443"
     volumes:
-      - wordpress_dir:/var/www/
+      - wordpress_dir:/var/www/wordpress
     networks:
       - inception-net
     depends_on:
       - wordpress
-    restart: on-failure
+    restart: unless-stopped
+
+volumes:
+  mariadb_dir:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/anahi/data/mariadb
+
+  wordpress_dir:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/anahi/data/wordpress
+

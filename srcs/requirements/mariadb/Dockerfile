@@ -17,15 +17,12 @@ COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d
 
 COPY tools/create_user.sh /
 RUN bash ./create_user.sh
-
-# RUN service mysql start && \
-# 	mysql < create_db_user.sql && \
 RUN rm -rf create_user.sh
 
 CMD ["mysqld_safe"]
 
-# test if you can connect to maridb database with user anahi
-# sudo docker exec -it mariadb mariadb --user anahi -proot
+# docker exec -it mariadb bash
+# 1) mysql -u root -p -p4242 ->>>> SELECT User, Host FROM mysql.user;
+# 2) mysql -u anahi -p -proot
 # SHOW DATABASES;
-# USE wordpress;
-# SHOW TABLES;
+# SHOW TABLES IN <database_name>; || USE wordpress; SHOW TABLES;

@@ -1,16 +1,16 @@
 FROM debian:buster
 
-#this exposes the port only to the other docker containers, but not to host
-EXPOSE 3306
-
-ARG DB_NAME=${DB_NAME}
-ARG DB_USER=${DB_USER}
-ARG DB_PASSWORD=${DB_PASSWORD}
-ARG DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+ARG MYSQL_DATABASE=${MYSQL_DATABASE}
+ARG MYSQL_USER=${MYSQL_USER}
+ARG MYSQL_PASSWORD=${MYSQL_PASSWORD}
+ARG MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 RUN apt-get update && apt-get install \
 	mariadb-server -y && \
 	rm -rf /var/lib/apt/lists/*
+
+#Exposes the port only to the other docker containers in the same network
+EXPOSE 3306
 
 RUN rm /etc/mysql/mariadb.conf.d/50-server.cnf
 COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d

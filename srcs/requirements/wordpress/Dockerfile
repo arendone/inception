@@ -1,13 +1,13 @@
 FROM debian:buster
 
-EXPOSE 9000
-
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get -y install \
 	php7.3-fpm \
 	php7.3-mysql \
 	mariadb-client \
-	curl && \
-	rm -rf /var/lib/apt/lists/*
+	curl \
+	&& rm -rf /var/lib/apt/lists/*
+
+EXPOSE 9000
 
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d
 
@@ -24,4 +24,5 @@ RUN mkdir /run/php
 
 COPY ./conf/config.sh /var/www/wordpress/config.sh
 RUN chmod +x /var/www/wordpress/config.sh
+
 CMD ["bash", "/var/www/wordpress/config.sh"]

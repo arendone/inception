@@ -1,9 +1,9 @@
 #!bin/bash
 cd /var/www/wordpress
 wp core config	--dbhost=$DB_HOST \
-				--dbname=$DB_NAME \
-				--dbuser=$DB_USER \
-				--dbpass=$DB_PASSWORD \
+				--dbname=$MYSQL_DATABASE \
+				--dbuser=$MYSQL_USER \
+				--dbpass=$MYSQL_PASSWORD \
 				--allow-root
 
 wp core install --title=$WP_TITLE \
